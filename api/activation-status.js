@@ -13,8 +13,8 @@ export default async function handler(req, res) {
   const client_id = req.query.client_id;
   if (!client_id) return res.status(400).json({ ready: false });
 
-  const base = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const base = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
 
   const r = await fetch(`${base}/get/${encodeURIComponent(client_id)}`, {
     headers: { Authorization: `Bearer ${token}` },
