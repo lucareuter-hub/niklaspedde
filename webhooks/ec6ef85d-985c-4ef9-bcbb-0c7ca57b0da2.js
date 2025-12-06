@@ -1,4 +1,4 @@
- // For Confirmation Pages SYNC tracking parameters
+ // For confirmation pages sync tracking parameters safe pass-through entity for n8n server
 
 
 export default async function handler(req, res) {
