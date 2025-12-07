@@ -1,12 +1,9 @@
  // For confirmation pages sync tracking parameters safe pass-through entity for n8n server
 
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+// For confirmation pages sync tracking parameters safe pass-through entity for n8n server
 
-  // Origin / Referer Check
+export default async function handler(req, res) {
   const origin  = req.headers.origin  || '';
   const referer = req.headers.referer || '';
 
@@ -16,12 +13,33 @@ export default async function handler(req, res) {
     'https://www.niklaspedde.com'
   ];
 
-  const isAllowed =
+  const isAllowedOrigin =
     allowedOrigins.some(o => origin.startsWith(o)) ||
     allowedOrigins.some(o => referer.startsWith(o));
 
-  if (!isAllowed) {
+  // CORS für Preflight (OPTIONS)
+  if (req.method === 'OPTIONS') {
+    if (!isAllowedOrigin) {
+      return res.status(403).end();
+    }
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    return res.status(204).end();
+  }
+
+  // Nur POST zulassen
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  if (!isAllowedOrigin) {
     return res.status(403).json({ error: 'Forbidden origin' });
+  }
+
+  // Für die eigentliche Antwort auch CORS setzen
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
   }
 
   const payload = req.body || {};
@@ -55,6 +73,9 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ status: 'ok' });
   } catch (e) {
-    return res.status(500).json({ error: 'Upstream request failed' });
+    return res.status(500).json({
+      error: 'Upstream request failed',
+      message: e.message || null
+    });
   }
 }
