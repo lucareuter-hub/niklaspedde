@@ -5,7 +5,7 @@
       "destination": "/api/webhooks/cf-test"
     },
     {
-      "source": "/webhook_events",
+      "source": "/clickfunnels_contact_events",
       "destination": "/api/webhooks/cf-events"
     }
   ]
