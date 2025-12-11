@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/funnel_webhooks/test",
-      "destination": "/api/cf-test"
+      "destination": "/api/webhooks/cf-test"
     },
     {
       "source": "/webhook_events",
-      "destination": "/api/cf-events"
+      "destination": "/api/webhooks/cf-events"
     }
   ]
 }
