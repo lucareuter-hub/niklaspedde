@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/funnel_webhooks/test",
-      "destination": "/api/webhooks/cf-test"
+      "destination": "/api/webhooks/clickfunnels-internal-test-call"
     }
   ]
 }
