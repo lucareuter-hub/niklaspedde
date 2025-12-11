@@ -12,13 +12,18 @@ export default async function handler(req, res) {
     body,
   });
 
-  // An n8n weiterleiten (Production-Webhook-URL eintragen)
   try {
-    await fetch("https://n8n.niklaspedde.com/webhook-test/e3800a80-bbab-4a3c-9979-fe8fb8c7ed6e", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+    await fetch(
+      "https://n8n.niklaspedde.com/webhook-test/clickfunnels_contact_events",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "n8n-webhook-secret": "526FAA78A46D4AE5CB993B4DBA218"
+        },
+        body: JSON.stringify(body),
+      }
+    );
   } catch (e) {
     console.error("Error forwarding to n8n", e);
     // ClickFunnels sollte trotzdem ein 200 sehen, sonst retry-Spam
