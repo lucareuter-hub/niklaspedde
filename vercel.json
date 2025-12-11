@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/funnel_webhooks/test",
+      "destination": "/api/cf-test"
+    },
+    {
+      "source": "/webhook_events",
+      "destination": "/api/cf-events"
+    }
+  ]
+}
