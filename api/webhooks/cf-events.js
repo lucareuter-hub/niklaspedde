@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
   // An n8n weiterleiten (Production-Webhook-URL eintragen)
   try {
-    await fetch("https://DEIN-N8N-HOST/webhook/DEIN-PFAD", {
+    await fetch("https://n8n.niklaspedde.com/webhook-test/e3800a80-bbab-4a3c-9979-fe8fb8c7ed6e", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
