@@ -15,6 +15,7 @@ export default async function handler(req, res) {
   const allowedOrigins = [
     'https://go.niklaspedde.com',
     'https://niklaspedde.com',
+    'https://kuma.niklaspedde.com',
     'https://www.niklaspedde.com'
   ];
 
