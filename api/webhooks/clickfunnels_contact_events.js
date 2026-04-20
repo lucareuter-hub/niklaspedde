@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
   try {
     await fetch(
-      "https://n8n.niklaspedde.com/webhook/clickfunnels_contact_events",
+      "https://npmediaautomation.com/webhook/clickfunnels_contact_events",
       {
         method: "POST",
         headers: {
