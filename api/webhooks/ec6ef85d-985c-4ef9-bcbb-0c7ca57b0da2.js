@@ -1,5 +1,21 @@
 // For confirmation pages sync tracking parameters safe pass-through entity for n8n server
 
+// Erlaubt sind diese Domains inklusive aller Subdomains (go., www., kuma., link., ...)
+const ALLOWED_APEX_DOMAINS = ['niklaspedde.com', 'consultingclub.com'];
+
+function isAllowedUrl(value) {
+  if (!value) return false;
+  try {
+    const { protocol, hostname } = new URL(value);
+    return (
+      protocol === 'https:' &&
+      ALLOWED_APEX_DOMAINS.some(d => hostname === d || hostname.endsWith('.' + d))
+    );
+  } catch (e) {
+    return false;
+  }
+}
+
 export default async function handler(req, res) {
   // ========== LOGGING: Eingang ==========
   console.log("Incoming request", {
@@ -12,21 +28,12 @@ export default async function handler(req, res) {
   const origin  = req.headers.origin  || '';
   const referer = req.headers.referer || '';
 
-  const allowedOrigins = [
-    'https://go.niklaspedde.com',
-    'https://niklaspedde.com',
-    'https://kuma.niklaspedde.com',
-    'https://www.niklaspedde.com'
-  ];
-
-  const isAllowedOrigin =
-    allowedOrigins.some(o => origin.startsWith(o)) ||
-    allowedOrigins.some(o => referer.startsWith(o));
+  const isAllowedOrigin = isAllowedUrl(origin) || isAllowedUrl(referer);
 
   // CORS für Preflight (OPTIONS)
   if (req.method === 'OPTIONS') {
     console.log("OPTIONS preflight received");
-    
+
     if (!isAllowedOrigin) {
       console.log("OPTIONS rejected: Forbidden origin");
       return res.status(403).end();
@@ -55,7 +62,24 @@ export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
 
-  const payload = req.body || {};
+  let payload = req.body || {};
+  if (typeof payload === 'string') {
+    try { payload = JSON.parse(payload); } catch (e) { payload = {}; }
+  }
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+    payload = {};
+  }
+
+  // ========== IP + User Agent serverseitig ==========
+  // Vercel setzt x-forwarded-for auf die echte Besucher-IP. Die hat Vorrang,
+  // der Wert vom Client (ipify) bleibt nur als Fallback.
+  const clientIp = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+  if (clientIp) {
+    payload.ipAddress = clientIp;
+  }
+  if (!payload.userAgent && req.headers['user-agent']) {
+    payload.userAgent = req.headers['user-agent'];
+  }
 
   // ========== LOGGING: Payload ==========
   console.log("Incoming POST payload:", payload);
